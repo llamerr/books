@@ -5,14 +5,19 @@
   "type": "module",
   "scripts": {
     "build": "next build",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
+    "db:push": "dotenvx run -- drizzle-kit push",
+    "db:studio": "dotenvx run -- drizzle-kit studio",
     "dev": "next dev",
+    "dev:https": "next dev --experimental-https",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "ngrok:cmd": "ngrok http --domain=$NGROK_DOMAIN https://localhost:$APP_PORT --oauth google --oauth-allow-email $NGROK_EMAIL",
+    "ngrok": "npx dotenv-run-script ngrok:cmd",
+    "docker": "docker compose up"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.7.0",
+    "@dotenvx/dotenvx": "^0.39.0",
     "@t3-oss/env-nextjs": "^0.10.1",
     "@tanstack/react-query": "^5.25.0",
     "@trpc/client": "next",
@@ -36,6 +41,7 @@
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
+    "dotenv-run-script": "^0.4.1",
     "drizzle-kit": "^0.21.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.3",

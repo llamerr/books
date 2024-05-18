@@ -1,0 +1,55 @@
+services:
+
+  postgres:
+    image: postgres:16
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - type: bind
+        source: ./data
+        target: /var/lib/postgresql/data
+    networks:
+      - postgres-db-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 8082:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=postgres@example.com
+      - PGADMIN_DEFAULT_PASSWORD=${POSTGRES_PASSWORD}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+      - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+    networks:
+      - postgres-db-network
+    entrypoint: /bin/sh -c "chmod 600 /pgpass; /entrypoint.sh;"
+    user: root
+    configs:
+      - source: servers.json
+        target: /pgadmin4/servers.json
+      - source: pgpass
+        target: /pgpass
+
+networks:
+  postgres-db-network:
+    driver: bridge
+
+configs:
+  pgpass:
+    content: postgres:5432:*:${POSTGRES_USER}:${POSTGRES_PASSWORD}
+  servers.json:
+    content: |
+      {"Servers": {"1": {
+        "Group": "Servers",
+        "Name": "Books DB",
+        "Host": "postgres",
+        "Port": 5432,
+        "MaintenanceDB": "postgres",
+        "Username": "${POSTGRES_USER}",
+        "PassFile": "/pgpass",
+        "SSLMode": "prefer"
+      }}}
