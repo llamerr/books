@@ -1,0 +1,60 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+// https://dbdiagram.io/d/Book-schema-65ab8df9ac844320ae54d6ac
+
+Table author {
+  id integer [primary key, increment]
+}
+
+Table author_details {
+  id integer [primary key, increment]
+  author_id integer
+  language varchar [not null]
+  name varchar [not null]
+  description text [not null]
+}
+
+Table work {
+  id integer [primary key, increment]
+}
+
+Table book {
+  id integer [primary key, increment]
+  work_id integer
+  isbn varchar [not null]
+  language varchar [not null]
+  title varchar [not null]
+  description text [not null]
+}
+
+Table work_author {
+  id integer [primary key, increment]
+  work_id integer
+  author_id integer
+}
+
+Table book_author {
+  id integer [primary key, increment]
+  book_id integer
+  author_id integer
+  role varchar [not null]
+}
+
+Table parallel_books {
+  id integer [primary key, increment]
+  book_id_1 integer
+  book_id_2 integer
+}
+
+Ref: work_author.work_id > work.id
+Ref: work_author.author_id > author.id
+
+Ref: book.work_id > work.id
+Ref: book_author.book_id > book.id
+Ref: book_author.author_id > author.id
+
+Ref: parallel_books.book_id_1 > book.id
+Ref: parallel_books.book_id_2 > book.id
+
+
+Ref: "author"."id" < "author_details"."author_id"
